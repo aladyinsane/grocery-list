@@ -3,6 +3,7 @@ import { SyncEngine, tokenFromLocation } from './sync/index.js';
 import { AddBar } from './ui/AddBar.js';
 import { InstallHelp, shouldPromptInstall } from './ui/InstallHelp.js';
 import { ItemList } from './ui/ItemList.js';
+import { pointManifestAtHousehold } from './ui/manifest.js';
 import { Landing } from './ui/Landing.js';
 import { SyncStatus } from './ui/SyncStatus.js';
 
@@ -23,6 +24,10 @@ function List({ token }: { token: string }) {
     engine.start();
     return () => engine.stop();
   }, [engine]);
+
+  // Do this before the user can reach the Share sheet, so Add to Home Screen captures
+  // this list rather than the landing page.
+  useEffect(() => pointManifestAtHousehold(token), [token]);
 
   // Re-render on a timer so "Synced 2m ago" doesn't sit there going stale while the
   // screen is otherwise idle -- a status line that lies about its own age is still lying.

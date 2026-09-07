@@ -14,7 +14,16 @@ beforeEach(() => {
     DB: asD1(new FakeD1()),
     // Nothing under /api touches the assets binding; this proves that stays true.
     ASSETS: {
-      fetch: async () => new Response('the app shell', { status: 200 }),
+      fetch: async (input: RequestInfo | URL) => {
+        const url = String(input instanceof Request ? input.url : input);
+        if (url.endsWith('/manifest.webmanifest')) {
+          return new Response(
+            JSON.stringify({ name: 'Groceries', start_url: '/', icons: [{ src: '/icon-192.png' }] }),
+            { status: 200 },
+          );
+        }
+        return new Response('the app shell', { status: 200 });
+      },
     } as unknown as Fetcher,
   };
 });
@@ -143,6 +152,37 @@ describe('serving the app', () => {
     // reads the token out of the path.
     const response = await call('/h/some-token');
     expect(await response.text()).toBe('the app shell');
+  });
+});
+
+describe('the home screen icon', () => {
+  // iOS launches an icon at the manifest's start_url, not at the page it was installed
+  // from. A single static manifest sent every icon to the landing page instead of the
+  // list, and an installed iOS web app cannot recover the token from localStorage because
+  // its storage is separate from Safari's. So the launch URL has to carry it.
+  it('serves a manifest that starts at this household, not the landing page', async () => {
+    const response = await call('/h/abc123/manifest.webmanifest');
+    expect(response.status).toBe(200);
+
+    const manifest = (await response.json()) as { start_url: string };
+    expect(manifest.start_url).toBe('/h/abc123');
+  });
+
+  it('keeps the name and icons from the static manifest, so the two cannot drift', async () => {
+    const response = await call('/h/abc123/manifest.webmanifest');
+    const manifest = (await response.json()) as { name: string; icons: unknown[] };
+    expect(manifest.name).toBe('Groceries');
+    expect(manifest.icons).toHaveLength(1);
+  });
+
+  it('is served as a manifest, and never cached', async () => {
+    const response = await call('/h/abc123/manifest.webmanifest');
+    expect(response.headers.get('Content-Type')).toBe('application/manifest+json');
+    expect(response.headers.get('Cache-Control')).toBe('no-store');
+  });
+
+  it('still serves the app shell for the list page itself', async () => {
+    expect(await (await call('/h/abc123')).text()).toBe('the app shell');
   });
 });
 

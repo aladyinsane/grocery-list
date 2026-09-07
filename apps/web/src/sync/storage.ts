@@ -44,6 +44,24 @@ export function load(token: string): PersistedState | null {
   }
 }
 
+/**
+ * The household this browser last opened, if any.
+ *
+ * Only useful in the browser that created or opened the list — an installed iOS web app
+ * gets a storage jar separate from Safari's, so it will find nothing here. That is exactly
+ * why the token has to live in the launch URL.
+ */
+export function storedToken(): string | null {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<PersistedState>;
+    return typeof parsed.token === 'string' ? parsed.token : null;
+  } catch {
+    return null;
+  }
+}
+
 export function save(state: PersistedState): void {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
