@@ -96,7 +96,7 @@ npm run preview     # builds, then serves everything from :8787
 
 ```bash
 npm run typecheck   # src and tests, all three tsconfigs
-npm test            # 54 tests
+npm test            # 64 tests
 npm run build
 ```
 
@@ -138,6 +138,57 @@ ever needs replacing:
 4. Send everyone the new link; each person re-adds it to their home screen.
 
 Rare enough that a manual procedure is the right amount of engineering.
+
+## Deleting an abandoned list
+
+Every household ever created still works. A list you made once while testing, or before
+getting the setup right, sits there indefinitely — reachable, functional, and empty.
+
+That is worth cleaning up, and not for tidiness. If a stale link is still sitting in a text
+message and someone taps it instead of the current one, both phones say *"Synced just now"*
+while showing different lists. A list that looks right and isn't is the exact failure this
+app exists to prevent ([principle 1](PRINCIPLES.md)). The rows cost nothing; the ambiguity
+does.
+
+**1. Work out which one to keep.** The database stores a hash of each token, not the token,
+so you cannot match your link against it directly. Listing households with their item counts
+is usually enough — yours is the one with groceries in it:
+
+```bash
+npx wrangler d1 execute grocery-list --remote --command \
+  "select h.id, h.created_at, h.revision, count(i.id) as items
+   from households h
+   left join items i on i.household_id = h.id and i.deleted_at is null
+   group by h.id order by h.created_at"
+```
+
+If that is ambiguous — several lists with items, say — add a uniquely named item to the real
+list from your phone, then find which household it landed in. No hashing required:
+
+```bash
+npx wrangler d1 execute grocery-list --remote --command \
+  "select household_id from items where name = 'keepthisone'"
+```
+
+**2. Take a backup.** Cheap, and this is the one operation here that destroys data:
+
+```bash
+npx wrangler d1 export grocery-list --remote --output backup-$(date +%F).sql
+```
+
+**3. Delete.** Items first — `items.household_id` references `households(id)`:
+
+```bash
+npx wrangler d1 execute grocery-list --remote --command \
+  "delete from items where household_id in ('<id1>','<id2>');
+   delete from households where id in ('<id1>','<id2>')"
+```
+
+**One consequence to know.** A phone still holding a deleted household's link gets a `404`
+and will sit showing *"Offline"* indefinitely. It is telling the user something is wrong,
+which is the important half — but it is the wrong reason, and that grates against
+[principle 2](PRINCIPLES.md). Noted in [ROADMAP.md](ROADMAP.md); it only matters if a
+deleted link is still in someone's hands.
 
 ## Cost
 

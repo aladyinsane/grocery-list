@@ -67,6 +67,14 @@ One tap to copy the whole list as plain text, so it can be pasted into a message
 
 ## Someday
 
+**Say when a list is gone, rather than "Offline."** If a household is deleted from D1, a
+phone still holding its link gets a `404` and shows *"Offline"* forever. It flags that
+something is wrong, which is the half that matters, but the reason is wrong — and
+[principle 2](PRINCIPLES.md) is specifically about not misreporting state. A `404` on the
+list endpoint should say "This list no longer exists" instead. Small, and only reachable if
+a deleted link is still in circulation; the cleanup procedure that creates the situation is
+in [OPERATIONS.md](OPERATIONS.md).
+
 **Item history and suggestions.** Typing "mi" suggests "milk" because we buy it constantly.
 Cheap to build once we have history, and meaningfully faster than typing.
 
