@@ -2,9 +2,7 @@
 
 Takes about thirty seconds. You only ever do this once.
 
-> **You need the app's address first.** Someone has to deploy it once — see
-> [OPERATIONS.md](OPERATIONS.md) — which produces a URL like
-> `https://grocery-list.<your-subdomain>.workers.dev`. Everything below assumes you have it.
+The app lives at **<https://grocery-list.groc-list.workers.dev>**.
 
 ---
 
@@ -33,7 +31,7 @@ stay behind the **?** button in the corner if you ever need them again.
 
 ## If you're setting it up for the first time
 
-1. Go to the app's address.
+1. Go to <https://grocery-list.groc-list.workers.dev>.
 2. Tap **Create our list**.
 3. You'll get your own private link. Tap **Copy link**, then follow steps 2–4 above to add
    it to your home screen.

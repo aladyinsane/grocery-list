@@ -28,10 +28,16 @@ npm run migrate:remote -w @grocery/api
 npm run deploy
 ```
 
-`wrangler deploy` prints the URL — something like
-`https://grocery-list.<your-subdomain>.workers.dev`. That address is what
-[SETUP.md](SETUP.md) refers to. Open it, tap **Create our list**, and you have your
+`wrangler deploy` prints the URL. With the `groc-list` workers.dev subdomain and the
+Worker named `grocery-list` in `wrangler.toml`, that is
+<https://grocery-list.groc-list.workers.dev> — the address
+[SETUP.md](SETUP.md) hands out. Open it, tap **Create our list**, and you have your
 household link.
+
+> **The host is part of every home screen icon.** Renaming the Worker later changes the
+> URL, which means a new icon for everyone and re-sharing the link — the household token
+> itself survives, since it lives in D1, but the old bookmark stops working. Cheapest to
+> settle the name before the first deploy.
 
 ## Deploying a change
 
