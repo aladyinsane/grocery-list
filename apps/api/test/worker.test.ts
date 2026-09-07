@@ -184,6 +184,7 @@ describe('the home screen icon', () => {
   it('still serves the app shell for the list page itself', async () => {
     expect(await (await call('/h/abc123')).text()).toBe('the app shell');
   });
+
 });
 
 describe('response headers', () => {
