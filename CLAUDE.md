@@ -49,9 +49,9 @@ something checks the fact automatically or it does not belong in prose.
 the index, stated test counts, and British spellings. It runs in CI. It cannot tell whether
 a sentence is still true, which is what the table above is for.
 
-Occasionally a British word is *data* rather than prose — the aisle dictionary lists
-"courgette" so that typing it finds the right shelf. Mark those regions rather than
-weakening the check:
+Occasionally a British word is *data* rather than prose — the aisle dictionary carries
+British produce names as lookup keys, so that either spelling finds the right shelf. Mark
+those regions rather than weakening the check:
 
 ```
 check-docs: allow-british:start — and say why
