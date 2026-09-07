@@ -27,6 +27,6 @@ add on A, check off on B, airplane mode, reconnect, converge.
 ## Checklist
 
 - [ ] Serves the [principles](docs/PRINCIPLES.md) — especially #1 (sync reliability) and #3 (stays simple)
-- [ ] Docs updated if behaviour changed (`docs/SETUP.md`, `docs/OPERATIONS.md`)
+- [ ] Docs updated if behavior changed (`docs/SETUP.md`, `docs/OPERATIONS.md`)
 - [ ] `docs/ROADMAP.md` updated if this ships or defers something on it
 - [ ] CI green

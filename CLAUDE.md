@@ -56,4 +56,6 @@ npm workspaces. `npm run typecheck`, `npm test`, `npm run build` from the root.
 - Anything touching sync gets the two-device manual check as well as unit tests: add on A,
   check off on B, airplane mode, edit both, reconnect, confirm both phones converge with
   nothing lost or duplicated.
+- American English spelling throughout — docs, comments, and UI copy alike ("behavior",
+  "recognize", "optimization").
 - Prefer the boring option. We are two people and a grocery list.

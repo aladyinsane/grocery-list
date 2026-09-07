@@ -37,7 +37,7 @@ We will identify a household by a **secret token embedded in the URL**.
   sends it as `Authorization: Bearer <token>` on every API request.
 - The server stores only the **SHA-256 hash** of the token. The plaintext is returned
   exactly once, at creation time, and never persisted server-side.
-- An unrecognised token returns `404`, never `401` or `403` — the server never confirms
+- An unrecognized token returns `404`, never `401` or `403` — the server never confirms
   that a household exists.
 - Requests are rate-limited per token to blunt brute-force attempts and to bound abuse if
   a link ever does leak.

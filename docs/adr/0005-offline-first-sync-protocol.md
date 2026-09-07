@@ -98,7 +98,7 @@ actually alive or just pretending" problem. [Principle 5](../PRINCIPLES.md).
 
 Deleted items become tombstones and are retained for 30 days before being purged. A client
 arriving with a `since` cursor older than the retention window — or one the server doesn't
-recognise — is told to discard its replica and take a full snapshot.
+recognize — is told to discard its replica and take a full snapshot.
 
 *Kills:* the zombie item. Without tombstones, a phone that was offline while an item was
 deleted re-adds it on reconnect. Thirty days covers any realistic absence; the resync
@@ -146,7 +146,7 @@ Both endpoints are idempotent and safe to retry.
 **Good:**
 
 - Correct under the conditions that actually occur: no signal, partial signal, both people
-  editing, app killed mid-write, phone offline for a fortnight.
+  editing, app killed mid-write, phone offline for two weeks.
 - Failure recovery is the normal code path, so it's continuously exercised rather than
   being a rarely-run branch that has quietly rotted.
 - Small enough to hold in your head — roughly 200 lines of protocol logic, all of it
@@ -181,7 +181,7 @@ The "proper" realtime answer, and Cloudflare makes it available. Rejected for
 resumption-after-gap handling — and crucially, **you still need a cursor-based catch-up
 path anyway** for the reconnect case, because a socket cannot prove it didn't miss
 anything. So websockets are strictly additional machinery on top of what we're building,
-in exchange for saving 3 seconds. The wrong trade today; a reasonable optimisation later,
+in exchange for saving 3 seconds. The wrong trade today; a reasonable optimization later,
 and it's on the roadmap.
 
 ### Server-Sent Events

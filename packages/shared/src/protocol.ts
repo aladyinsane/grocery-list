@@ -57,7 +57,7 @@ export type Mutation =
  * `GET /api/list?since=<revision>`
  *
  * Returns everything that changed after `since`. When `resync` is true the client's cursor
- * was older than the tombstone retention window (or unrecognised), so `items` is a full
+ * was older than the tombstone retention window (or unrecognized), so `items` is a full
  * snapshot and the local replica must be replaced rather than merged.
  */
 export interface ListResponse {

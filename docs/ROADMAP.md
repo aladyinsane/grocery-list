@@ -19,7 +19,7 @@ Planned approach: a static dictionary of common grocery items shipped in the app
 locally. Instant, free, works offline, no API key. Unknown items land in "Other"; dragging
 an item to a different aisle teaches it, and that correction syncs to both phones.
 
-Open question for the ADR: whether an LLM fallback for unrecognised items earns its keep,
+Open question for the ADR: whether an LLM fallback for unrecognized items earns its keep,
 or whether a good dictionary plus learned corrections covers the long tail. Lean: dictionary
 only, revisit with real data on what actually lands in "Other."
 

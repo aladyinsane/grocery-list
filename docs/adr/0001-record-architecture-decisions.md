@@ -40,7 +40,7 @@ is the starting point for new records.
   shape of the system and why it's shaped that way.
 - It costs something. Writing an ADR takes real time, and for a two-person grocery list
   that overhead is only worth it for genuinely significant decisions. Deciding what
-  counts as significant is a judgement call we will sometimes get wrong in both directions.
+  counts as significant is a judgment call we will sometimes get wrong in both directions.
 - There is a risk of ADRs drifting out of date with the code. The mitigation is the
   supersession rule plus the PR template's requirement to name an ADR.
 
