@@ -27,6 +27,19 @@ add on A, check off on B, airplane mode, reconnect, converge.
 ## Checklist
 
 - [ ] Serves the [principles](docs/PRINCIPLES.md) — especially #1 (sync reliability) and #3 (stays simple)
-- [ ] Docs updated if behavior changed (`docs/SETUP.md`, `docs/OPERATIONS.md`)
-- [ ] `docs/ROADMAP.md` updated if this ships or defers something on it
-- [ ] CI green
+- [ ] CI green, including `npm run check:docs`
+
+### Documentation check
+
+Went through the list in `CLAUDE.md`. The question is *"is this still true?"*, not *"did I
+touch it?"* — say what you checked, including the ones that needed nothing.
+
+- [ ] `README.md` — status still accurate
+- [ ] `docs/adr/` — no undocumented decision here; index current
+- [ ] `docs/SETUP.md` — a non-technical reader would still succeed following it exactly
+- [ ] `docs/OPERATIONS.md` — commands still work; nothing new worth writing down
+- [ ] `docs/ROADMAP.md` — updated if this ships, defers or declines something
+- [ ] `apps/*/README.md` — still describe what's in the directory
+- [ ] `CLAUDE.md` — no new convention that belongs here
+
+<!-- Anything you changed, and anything you deliberately left alone: -->

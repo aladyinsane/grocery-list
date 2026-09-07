@@ -68,8 +68,9 @@ shortcuts/     the Siri shortcut (PR 4)
 
 ```
 npm install
+npm run check:docs  # links, ADR index, house style
 npm run typecheck   # src and tests
-npm test            # 64 tests
+npm test            # the full suite
 npm run build
 ```
 
@@ -78,6 +79,7 @@ To run it locally, and to deploy, see [docs/OPERATIONS.md](docs/OPERATIONS.md).
 ## How we work
 
 Significant decisions get an ADR before they get code. The ADR is reviewed first, then a
-feature PR implements it and names it. ADRs are immutable — changing our minds means a new
+feature PR implements it and names it. Every PR goes through the documentation check in
+[CLAUDE.md](CLAUDE.md) — the question being "is this still true?", not "did I touch it?". ADRs are immutable — changing our minds means a new
 one that supersedes the old. [ADR-0001](docs/adr/0001-record-architecture-decisions.md)
 explains why.

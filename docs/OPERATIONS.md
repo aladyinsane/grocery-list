@@ -95,12 +95,13 @@ npm run preview     # builds, then serves everything from :8787
 ## Checks
 
 ```bash
+npm run check:docs  # links, ADR index, drift-prone facts, American English
 npm run typecheck   # src and tests, all three tsconfigs
-npm test            # 64 tests
+npm test            # the full suite
 npm run build
 ```
 
-CI runs all three on every pull request.
+CI runs all four on every pull request.
 
 ## Database
 
