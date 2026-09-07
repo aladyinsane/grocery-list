@@ -7,7 +7,7 @@
 
 This is the feature that started the whole project, alongside sync. iOS Reminders sorted a
 grocery list into aisles by itself, and doing without it is the difference between walking
-a shop once and zig-zagging back for the yoghurt you scrolled past.
+a shop once and zig-zagging back for the yogurt you scrolled past.
 
 The list currently renders in the order things were typed, which is the order they were
 *remembered* in — not the order you encounter them. Categorization is what turns a list of
