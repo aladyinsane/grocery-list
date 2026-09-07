@@ -17,10 +17,6 @@ eighteen months, having forgotten all of it.
 npm install
 npx wrangler login
 
-# Create the database, then paste the id it prints into apps/api/wrangler.toml
-# (replacing REPLACE_WITH_YOUR_DATABASE_ID).
-npx wrangler d1 create grocery-list
-
 # Create the tables.
 npm run migrate:remote -w @grocery/api
 
@@ -28,16 +24,43 @@ npm run migrate:remote -w @grocery/api
 npm run deploy
 ```
 
-`wrangler deploy` prints the URL. With the `groc-list` workers.dev subdomain and the
-Worker named `grocery-list` in `wrangler.toml`, that is
-<https://grocery-list.groc-list.workers.dev> — the address
-[SETUP.md](SETUP.md) hands out. Open it, tap **Create our list**, and you have your
-household link.
+> The `database_id` in `apps/api/wrangler.toml` is already set and committed. You only need
+> `npx wrangler d1 create grocery-list` — and to paste the new id in — if you are standing
+> this up under a *different* Cloudflare account.
 
-> **The host is part of every home screen icon.** Renaming the Worker later changes the
-> URL, which means a new icon for everyone and re-sharing the link — the household token
-> itself survives, since it lives in D1, but the old bookmark stops working. Cheapest to
-> settle the name before the first deploy.
+`wrangler deploy` prints the workers.dev URL —
+`https://grocery-list.groc-list.workers.dev`.
+
+## Connecting the custom domain
+
+The address we actually hand out is **<https://groceries.laurenchaplinski.com>**
+(ADR-0006). This is a one-time step in the Cloudflare dashboard, not something `wrangler`
+does:
+
+1. Open the `grocery-list` Worker → **Settings** → **Domains & Routes** → **Add** →
+   **Custom Domain**.
+2. Enter the full hostname: `groceries.laurenchaplinski.com`. Not just `groceries` — the
+   field takes a complete hostname.
+3. Cloudflare creates the proxied DNS record and provisions the TLS certificate itself.
+   Do not pre-create a CNAME by hand; a Custom Domain cannot be added on a hostname that
+   already has one.
+
+Then open <https://groceries.laurenchaplinski.com>, tap **Create our list**, and you have
+your household link.
+
+> **Do not enter the bare apex** (`laurenchaplinski.com`). That would route the entire
+> personal domain to this Worker.
+
+**The workers.dev URL stays enabled on purpose.** It is the fallback if the domain ever
+lapses or its nameservers move: the app is still reachable at
+`grocery-list.groc-list.workers.dev`, and recovery is re-sharing a link rather than
+rebuilding anything — the lists live in D1, which none of this touches. Hand out only the
+custom domain; keep the other in your back pocket.
+
+> **The host is part of every home screen icon.** Changing the address later means a new
+> icon for both of you and re-sharing the link. The household token itself survives, since
+> it lives in D1, but the old bookmark stops working. ADR-0006 is why this got settled
+> before anyone installed anything.
 
 ## Deploying a change
 

@@ -2,7 +2,7 @@
 
 Takes about thirty seconds. You only ever do this once.
 
-The app lives at **<https://grocery-list.groc-list.workers.dev>**.
+The app lives at **<https://groceries.laurenchaplinski.com>**.
 
 ---
 
@@ -31,7 +31,7 @@ stay behind the **?** button in the corner if you ever need them again.
 
 ## If you're setting it up for the first time
 
-1. Go to <https://grocery-list.groc-list.workers.dev>.
+1. Go to <https://groceries.laurenchaplinski.com>.
 2. Tap **Create our list**.
 3. You'll get your own private link. Tap **Copy link**, then follow steps 2–4 above to add
    it to your home screen.

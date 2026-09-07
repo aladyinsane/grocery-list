@@ -22,11 +22,18 @@ Why this is tolerable for now: the token is 128 bits of randomness, so guessing 
 something rate limiting meaningfully changes. What rate limiting actually buys is bounding
 abuse if a link leaks, and cost protection — neither urgent at two users on a free tier.
 
-Options when we come back to it: Cloudflare's rate-limiting binding once it settles, a WAF
-rule at the zone level (needs a custom domain, not workers.dev), or a counter column on the
-household row. Should be a short ADR, since it revisits an accepted decision.
+Options when we come back to it: a WAF rate limiting rule at the zone level, Cloudflare's
+per-Worker rate-limiting binding once it settles, or a counter column on the household row.
+Should be a short ADR, since it revisits an accepted decision.
 
-### Automatic categorization — ADR-0006
+**ADR-0006 opened the WAF route** by moving us onto a custom domain, so this is now
+reachable without further infrastructure work. Read the free tier honestly before counting
+on it: it includes one rate limiting rule, IP-based fixed-window. That bounds a crude flood
+from a single source, which is most of the practical value here — but it is not the
+per-token limiting ADR-0004 actually specifies, so it narrows the gap rather than closing
+it.
+
+### Automatic categorization — ADR-0008
 Items sort themselves into aisles (Produce, Dairy, Meat & Fish, Bakery, Frozen, Pantry,
 Drinks, Household, Other), the way iOS Reminders did. The headline feature we're missing.
 
