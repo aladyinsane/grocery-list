@@ -23,9 +23,18 @@ const problems = [];
 const report = (file, line, message) =>
   problems.push(`${relative(root, file)}${line ? `:${line}` : ''}  ${message}`);
 
-/** Tracked files only, which conveniently excludes node_modules, dist and stray scratch files. */
+/**
+ * Every file git would keep: tracked, plus untracked ones that are not ignored. That
+ * excludes node_modules, dist and scratch files, and — the reason for `--others` — means a
+ * brand new file is checked before it is committed rather than after. Listing only tracked
+ * files made this script's own coverage depend on whether `git add` had happened yet.
+ */
 function tracked(pattern) {
-  return execFileSync('git', ['ls-files', pattern], { cwd: root, encoding: 'utf8' })
+  return execFileSync(
+    'git',
+    ['ls-files', '--cached', '--others', '--exclude-standard', pattern],
+    { cwd: root, encoding: 'utf8' },
+  )
     .split('\n')
     .filter(Boolean)
     .map((f) => join(root, f));
@@ -130,10 +139,29 @@ const authored = [...new Set(AUTHORED.flatMap(tracked))].filter(
 
 const anyBritish = new RegExp(`\\b(${Object.keys(BRITISH).join('|')})\\b`, 'gi');
 
+/**
+ * Sometimes a British word is data rather than prose — the categorization dictionary lists
+ * "courgette" so that typing it still finds the right aisle. Mark those regions:
+ *
+ *   check-docs: allow-british:start  (say why)
+ *   ...
+ *   check-docs: allow-british:end
+ *
+ * Deliberately narrow and visible. Exempting a whole file would quietly let real British
+ * prose in alongside the data.
+ */
+const ALLOW_START = /check-docs: allow-british:start/;
+const ALLOW_END = /check-docs: allow-british:end/;
+
 for (const file of authored) {
+  let allowed = false;
   readFileSync(file, 'utf8')
     .split('\n')
     .forEach((text, i) => {
+      if (ALLOW_START.test(text)) allowed = true;
+      else if (ALLOW_END.test(text)) allowed = false;
+      if (allowed) return;
+
       for (const [word] of text.matchAll(anyBritish)) {
         const american = BRITISH[word.toLowerCase()];
         report(file, i + 1, `"${word}" -- house style is American English, use "${american}"`);

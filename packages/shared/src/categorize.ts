@@ -21,7 +21,10 @@ import { UNCATEGORIZED, type Category } from './categories.js';
  * household's own history. If something keeps landing in "Other", add it here.
  *
  * British names appear alongside American ones as extra keys. Nothing user-facing reads as
- * British — the aisle names are what get shown — but typing "courgette" should still work.
+ * British — the aisle names are what get shown — but typing it should still work.
+ *
+ * check-docs: allow-british:start — the entries below are lookup keys, not prose. They
+ * exist so that either spelling of an item finds the right aisle.
  */
 const DICTIONARY: Record<Category, readonly string[]> = {
   Produce: [
@@ -83,6 +86,7 @@ const DICTIONARY: Record<Category, readonly string[]> = {
   ],
   Other: [],
 };
+// check-docs: allow-british:end
 
 /** Longest keys first, so "oat milk" wins over "milk". */
 const BY_NAME: ReadonlyMap<string, Category> = new Map(

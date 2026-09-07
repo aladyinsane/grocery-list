@@ -60,12 +60,15 @@ describe('names as people actually type them', () => {
     expect(categorize('oat milk')).toBe('Dairy & Eggs');
   });
 
+  // check-docs: allow-british:start — these are inputs a user might type, which is the
+  // entire point of the test.
   it('accepts British names without them showing up anywhere', () => {
-    // Typing "courgette" should work; the aisle shown is still the American one.
+    // The aisle shown is still the American one; only the lookup is forgiving.
     expect(categorize('courgette')).toBe('Produce');
     expect(categorize('aubergine')).toBe('Produce');
     expect(categorize('prawns')).toBe('Meat & Fish');
   });
+  // check-docs: allow-british:end
 
   it('gives up gracefully on something it has never heard of', () => {
     expect(categorize('nduja')).toBe('Other');
