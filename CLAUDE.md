@@ -25,6 +25,30 @@ explaining, the feature is wrong.
 - **Small PRs.** One ADR's worth of work at a time.
 - Ideas that aren't ready go in `docs/ROADMAP.md` rather than into the code.
 
+### The documentation check
+
+Before opening a PR, go through this list and say in the PR what you found. The question
+for each is **"is this still true?"**, not "did I touch it?" — the docs that go wrong are
+the ones nobody edited.
+
+| Document | Ask |
+|---|---|
+| `README.md` | Does the status still describe where the project actually is? |
+| `docs/adr/` | Is there a decision in this PR that needs an ADR? Is the index current? |
+| `docs/SETUP.md` | Would a non-technical reader still succeed following it *exactly*? |
+| `docs/OPERATIONS.md` | Do the commands still work? Is there a new one worth writing down? |
+| `docs/ROADMAP.md` | Does this ship, defer, or decline something on it? |
+| `apps/*/README.md` | Do they still describe what is in the directory? |
+| `CLAUDE.md` | Did this PR establish a convention that belongs here? |
+
+**Don't write down facts that drift.** Test counts, version numbers, "you are here"
+markers — all of these have already gone stale in this repo, some of them twice. Either
+something checks the fact automatically or it does not belong in prose.
+
+`npm run check:docs` covers the mechanical part: broken relative links, ADRs missing from
+the index, stated test counts, and British spellings. It runs in CI. It cannot tell whether
+a sentence is still true, which is what the table above is for.
+
 ## Decisions already made — read before proposing otherwise
 
 | ADR | Decision | The thing people forget |

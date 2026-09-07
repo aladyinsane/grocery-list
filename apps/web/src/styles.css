@@ -177,7 +177,7 @@ body {
 .item__check {
   display: flex;
   align-items: center;
-  /* Generous hit area -- this gets tapped one-handed while pushing a trolley. */
+  /* Generous hit area -- this gets tapped one-handed while pushing a cart. */
   padding: 0.9rem 0.15rem;
   cursor: pointer;
 }
