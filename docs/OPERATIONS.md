@@ -5,9 +5,13 @@ eighteen months, having forgotten all of it.
 
 ---
 
-## First deploy
+## What you need
 
-You need a free Cloudflare account. Everything here stays inside its free tier.
+- **Node 22 or newer.** The API test suite uses Node's built-in `node:sqlite`, which
+  arrived in Node 22.
+- A free Cloudflare account. Everything here stays inside its free tier.
+
+## First deploy
 
 ```bash
 npm install
