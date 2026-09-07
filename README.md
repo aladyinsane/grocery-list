@@ -28,7 +28,7 @@ offline, with a status line that tells you the truth about whether you're synced
 |---|---|
 | **PR 1** | Principles, ADRs 0001–0005, repo structure — *merged* |
 | **PR 2** | The working list: Worker + D1 + PWA + sync ← *you are here* |
-| **PR 3** | Automatic categorization into aisles (ADR-0006) |
+| **PR 3** | Automatic categorization into aisles (ADR-0008) |
 | **PR 4** | Siri, via an Apple Shortcut (ADR-0007) |
 
 `docs/ROADMAP.md` has everything after that.
@@ -41,6 +41,7 @@ offline, with a status line that tells you the truth about whether you're synced
 | **Back end** | Cloudflare Worker + D1, serving the app from the same origin — [ADR-0003](docs/adr/0003-cloudflare-workers-and-d1.md) |
 | **Access** | A secret link per household, no accounts — [ADR-0004](docs/adr/0004-secret-household-link-authentication.md) |
 | **Sync** | Offline-first, operation-based, cursor-pulled — [ADR-0005](docs/adr/0005-offline-first-sync-protocol.md) |
+| **Address** | `groceries.laurenchaplinski.com`, a Cloudflare custom domain — [ADR-0006](docs/adr/0006-serve-from-a-custom-domain.md) |
 
 ```
 docs/          principles, ADRs, setup and operations guides
