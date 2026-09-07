@@ -33,17 +33,14 @@ from a single source, which is most of the practical value here — but it is no
 per-token limiting ADR-0004 actually specifies, so it narrows the gap rather than closing
 it.
 
-### Automatic categorization — ADR-0008
-Items sort themselves into aisles (Produce, Dairy, Meat & Fish, Bakery, Frozen, Pantry,
-Drinks, Household, Other), the way iOS Reminders did. The headline feature we're missing.
+### Automatic categorization — [ADR-0008](adr/0008-automatic-item-categorization.md), accepted, not yet built
+Items sort themselves into aisles, the way iOS Reminders did. The headline feature we're
+still missing. The decision is settled; the implementation is the next feature PR.
 
-Planned approach: a static dictionary of common grocery items shipped in the app, matched
-locally. Instant, free, works offline, no API key. Unknown items land in "Other"; dragging
-an item to a different aisle teaches it, and that correction syncs to both phones.
-
-Open question for the ADR: whether an LLM fallback for unrecognized items earns its keep,
-or whether a good dictionary plus learned corrections covers the long tail. Lean: dictionary
-only, revisit with real data on what actually lands in "Other."
+The open question — whether unrecognized items need an LLM fallback — was answered *no*, on
+offline, latency and recurring-cost grounds, but deliberately left reviewable: **if "Other"
+is still routinely occupied after a month of real shopping, that is evidence and the
+fallback is worth a new ADR.** Worth actually checking rather than assuming either way.
 
 ### Siri — ADR-0007
 "Hey Siri, Grocery" → "What are we adding?" → "milk and eggs." An Apple Shortcut that

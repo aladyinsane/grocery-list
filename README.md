@@ -21,17 +21,21 @@ Free to run, nothing to renew, nothing that expires and needs reinstalling.
 
 ## Status
 
-The list works. Add items, check them off, edit them, clear the done pile — on two phones,
-offline, with a status line that tells you the truth about whether you're synced.
+**In daily use.** Add items, check them off, edit them, clear the done pile — on two phones,
+offline, with a status line that tells you the truth about whether you're synced. The
+two-device behavior has been confirmed on real hardware, not just in tests: both phones
+converge, an airplane-mode session drains when signal returns, and nothing is lost or
+duplicated.
 
 | | |
 |---|---|
-| **PR 1** | Principles, ADRs 0001–0005, repo structure — *merged* |
-| **PR 2** | The working list: Worker + D1 + PWA + sync ← *you are here* |
-| **PR 3** | Automatic categorization into aisles (ADR-0008) |
-| **PR 4** | Siri, via an Apple Shortcut (ADR-0007) |
+| Principles and ADRs 0001–0005 | shipped |
+| The working list: Worker + D1 + PWA + sync | shipped |
+| Custom domain ([ADR-0006](docs/adr/0006-serve-from-a-custom-domain.md)) | shipped |
+| Automatic categorization into aisles ([ADR-0008](docs/adr/0008-automatic-item-categorization.md)) | decided, not yet built |
+| Siri, via an Apple Shortcut (ADR-0007) | not yet decided |
 
-`docs/ROADMAP.md` has everything after that.
+`docs/ROADMAP.md` has everything after that, including what we've deliberately declined.
 
 ## How it's built
 

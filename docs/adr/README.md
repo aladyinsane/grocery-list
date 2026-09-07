@@ -35,13 +35,13 @@ and what we now have to live with as a result.
 | [0004](0004-secret-household-link-authentication.md) | Authenticate with a secret household link | Accepted |
 | [0005](0005-offline-first-sync-protocol.md) | Offline-first sync protocol | Accepted |
 | [0006](0006-serve-from-a-custom-domain.md) | Serve the app from a custom domain | Accepted |
+| [0008](0008-automatic-item-categorization.md) | Automatic item categorization | Accepted |
 
 Planned, not yet written:
 
 | # | Title | Status |
 |---|---|---|
 | 0007 | Siri support via Apple Shortcuts | Not yet written |
-| 0008 | Automatic item categorization | Not yet written |
 
 > **Why 0008 comes before 0007 in the plan.** Categorization was pencilled in as 0006 and
 > Siri as 0007. When the custom-domain decision took 0006, the obvious move was to shift
