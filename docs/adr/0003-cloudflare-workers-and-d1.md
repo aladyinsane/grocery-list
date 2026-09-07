@@ -60,7 +60,7 @@ Concretely:
 - **We write more code than a BaaS would need.** Supabase or Firebase would hand us
   realtime sync and auth off the shelf; here we implement the sync protocol ourselves
   (ADR-0005). We judge this a fair trade: the protocol is ~200 lines, we understand every
-  line of it, and it has no vendor behaviour we can't inspect.
+  line of it, and it has no vendor behavior we can't inspect.
 - **Vendor lock-in to Cloudflare's runtime.** The Worker uses Cloudflare's fetch handler
   and D1 bindings, so moving providers means rewriting the entry point and swapping the
   database driver. The business logic and schema are portable; the plumbing isn't. For a
@@ -114,6 +114,6 @@ depends on.
 
 ### Cloudflare Pages for the front end, Workers for the API
 
-The conventional split. Rejected in favour of one Worker serving both, because two
+The conventional split. Rejected in favor of one Worker serving both, because two
 deploy targets means CORS configuration, two URLs, and the possibility of a front end and
 an API being at different versions. Fewer moving parts, per [principle 5](../PRINCIPLES.md).
