@@ -13,6 +13,7 @@ import {
   mergeChanges,
   replay,
   visibleItems,
+  groupedItems,
   type ItemMap,
 } from '../src/sync/merge.js';
 
@@ -22,6 +23,8 @@ function item(overrides: Partial<Item> & Pick<Item, 'id'>): Item {
     nameUpdatedAt: 100,
     checked: false,
     checkedUpdatedAt: 100,
+    category: 'Dairy & Eggs',
+    categoryUpdatedAt: 100,
     deletedAt: null,
     createdAt: 100,
     revision: 1,
@@ -33,6 +36,7 @@ const add = (id: string, name: string, at: number): Mutation => ({
   op: 'addItem',
   itemId: id,
   name,
+  category: 'Other',
   clientTime: at,
 });
 
@@ -175,6 +179,80 @@ describe('catching up from the server', () => {
 
   it('never moves the cursor backwards', () => {
     expect(highestRevision([item({ id: 'a', revision: 2 })], 9)).toBe(9);
+  });
+});
+
+describe('aisles (ADR-0008)', () => {
+  it('groups the list into aisles, in shop order', () => {
+    const items: ItemMap = {
+      a: item({ id: 'a', name: 'milk', category: 'Dairy & Eggs', createdAt: 1 }),
+      b: item({ id: 'b', name: 'bananas', category: 'Produce', createdAt: 2 }),
+      c: item({ id: 'c', name: 'bread', category: 'Bakery', createdAt: 3 }),
+    };
+    // Produce comes before Bakery comes before Dairy, whatever order they were typed in.
+    expect(groupedItems(visibleItems(items)).map((g) => g.category)).toEqual([
+      'Produce',
+      'Bakery',
+      'Dairy & Eggs',
+    ]);
+  });
+
+  it('keeps entry order within an aisle', () => {
+    const items: ItemMap = {
+      b: item({ id: 'b', name: 'spinach', category: 'Produce', createdAt: 2 }),
+      a: item({ id: 'a', name: 'bananas', category: 'Produce', createdAt: 1 }),
+    };
+    expect(visibleItems(items).map((i) => i.name)).toEqual(['bananas', 'spinach']);
+  });
+
+  it('puts items with no category last, under Other', () => {
+    const items: ItemMap = {
+      a: item({ id: 'a', name: 'nduja', category: null, createdAt: 1 }),
+      b: item({ id: 'b', name: 'bananas', category: 'Produce', createdAt: 2 }),
+    };
+    const groups = groupedItems(visibleItems(items));
+    expect(groups.map((g) => g.category)).toEqual(['Produce', 'Other']);
+  });
+
+  it('omits empty aisles entirely', () => {
+    const items: ItemMap = { a: item({ id: 'a', category: 'Produce' }) };
+    expect(groupedItems(visibleItems(items))).toHaveLength(1);
+  });
+
+  it('moves an item when its aisle is corrected', () => {
+    const start: ItemMap = { a: item({ id: 'a', category: 'Other', categoryUpdatedAt: 100 }) };
+    const moved = applyMutation(start, {
+      op: 'setCategory',
+      itemId: 'a',
+      category: 'Dairy & Eggs',
+      clientTime: 200,
+    });
+    expect(moved['a']?.category).toBe('Dairy & Eggs');
+  });
+
+  it('does not let a correction disturb the name or checked state', () => {
+    const start: ItemMap = {
+      a: item({ id: 'a', name: 'oat milk', checked: true, categoryUpdatedAt: 100 }),
+    };
+    const moved = applyMutation(start, {
+      op: 'setCategory',
+      itemId: 'a',
+      category: 'Pantry',
+      clientTime: 200,
+    });
+    expect(moved['a']?.name).toBe('oat milk');
+    expect(moved['a']?.checked).toBe(true);
+  });
+
+  it('ignores a correction older than the one already applied', () => {
+    const start: ItemMap = { a: item({ id: 'a', category: 'Drinks', categoryUpdatedAt: 500 }) };
+    const stale = applyMutation(start, {
+      op: 'setCategory',
+      itemId: 'a',
+      category: 'Frozen',
+      clientTime: 200,
+    });
+    expect(stale['a']?.category).toBe('Drinks');
   });
 });
 

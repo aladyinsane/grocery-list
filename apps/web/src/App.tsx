@@ -73,6 +73,7 @@ function List({ token }: { token: string }) {
           items={snapshot.items}
           onToggle={(id, checked) => engine.setChecked(id, checked)}
           onRename={(id, name) => engine.rename(id, name)}
+          onRecategorize={(id, category) => engine.setCategory(id, category)}
           onRemove={(id) => engine.remove(id)}
         />
       ) : (

@@ -152,6 +152,21 @@ body {
 
 /* --- items ------------------------------------------------------------------------- */
 
+/* --- aisles ------------------------------------------------------------------------ */
+
+.aisle + .aisle {
+  margin-top: 1.25rem;
+}
+
+.aisle__name {
+  margin: 0 0 0.4rem 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
 .items {
   list-style: none;
   margin: 0;
@@ -163,11 +178,39 @@ body {
 }
 
 .item {
+  padding: 0 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.item__row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0 0.9rem;
-  border-bottom: 1px solid var(--line);
+}
+
+/* The aisle picker, shown only while a row is being edited. */
+.item__aisle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0 0.75rem 2.15rem;
+}
+
+.item__aisle-label {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.item__aisle select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--ink);
+  /* 16px minimum, or iOS zooms the page when the control is focused. */
+  font-size: 1rem;
 }
 
 .item:last-child {

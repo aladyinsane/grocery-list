@@ -32,7 +32,7 @@ duplicated.
 | Principles and ADRs 0001–0005 | shipped |
 | The working list: Worker + D1 + PWA + sync | shipped |
 | Custom domain ([ADR-0006](docs/adr/0006-serve-from-a-custom-domain.md)) | shipped |
-| Automatic categorization into aisles ([ADR-0008](docs/adr/0008-automatic-item-categorization.md)) | decided, not yet built |
+| Automatic categorization into aisles ([ADR-0008](docs/adr/0008-automatic-item-categorization.md)) | shipped |
 | Siri, via an Apple Shortcut (ADR-0007) | not yet decided |
 
 `docs/ROADMAP.md` has everything after that, including what we've deliberately declined.

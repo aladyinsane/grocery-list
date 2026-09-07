@@ -41,6 +41,7 @@ const add = (id: string, name: string, at = 5_000): Mutation => ({
   op: 'addItem',
   itemId: id,
   name,
+  category: 'Other',
   clientTime: at,
 });
 
@@ -129,6 +130,53 @@ describe('applying mutations', () => {
 
     const { items } = await listChanges(db, await refresh(), 0);
     expect(items).toHaveLength(1);
+  });
+});
+
+describe('categories (ADR-0008)', () => {
+  it('stores the category the client worked out', async () => {
+    await apply([{ op: 'addItem', itemId: 'a', name: 'milk', category: 'Dairy & Eggs', clientTime: 5_000 }]);
+    const { items } = await listChanges(db, await refresh(), 0);
+    expect(items[0]?.category).toBe('Dairy & Eggs');
+  });
+
+  it('lets a correction move an item to another aisle', async () => {
+    await apply([{ op: 'addItem', itemId: 'a', name: 'oat milk', category: 'Other', clientTime: 5_000 }]);
+    await apply([{ op: 'setCategory', itemId: 'a', category: 'Dairy & Eggs', clientTime: 6_000 }]);
+
+    const { items } = await listChanges(db, await refresh(), 0);
+    expect(items[0]?.category).toBe('Dairy & Eggs');
+  });
+
+  it('does not let a correction disturb the name or the checked state', async () => {
+    // The whole reason category has its own clock (ADR-0005 per-field merging).
+    await apply([{ op: 'addItem', itemId: 'a', name: 'milk', category: 'Other', clientTime: 5_000 }]);
+    await apply([
+      { op: 'renameItem', itemId: 'a', name: 'oat milk', clientTime: 6_000 },
+      { op: 'setChecked', itemId: 'a', checked: true, clientTime: 6_001 },
+    ]);
+    await apply([{ op: 'setCategory', itemId: 'a', category: 'Dairy & Eggs', clientTime: 7_000 }]);
+
+    const { items } = await listChanges(db, await refresh(), 0);
+    expect(items[0]?.name).toBe('oat milk');
+    expect(items[0]?.checked).toBe(true);
+    expect(items[0]?.category).toBe('Dairy & Eggs');
+  });
+
+  it('ignores a correction older than the one already stored', async () => {
+    await apply([{ op: 'addItem', itemId: 'a', name: 'milk', category: 'Other', clientTime: 5_000 }]);
+    await apply([{ op: 'setCategory', itemId: 'a', category: 'Drinks', clientTime: 9_000 }]);
+    await apply([{ op: 'setCategory', itemId: 'a', category: 'Frozen', clientTime: 6_000 }]);
+
+    const { items } = await listChanges(db, await refresh(), 0);
+    expect(items[0]?.category).toBe('Drinks');
+  });
+
+  it('leaves items that predate the migration uncategorized', async () => {
+    // Written the way a pre-ADR-0008 row looks: no category at all.
+    await apply([{ op: 'deleteItem', itemId: 'ghost', clientTime: 5_000 }]);
+    const { items } = await listChanges(db, await refresh(), 0);
+    expect(items.find((i) => i.id === 'ghost')).toBeUndefined();
   });
 });
 

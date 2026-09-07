@@ -8,7 +8,7 @@
  * counter has moved but the items it describes have not.
  */
 
-import type { Item, Mutation, Revision } from '@grocery/shared';
+import { isCategory, type Category, type Item, type Mutation, type Revision } from '@grocery/shared';
 
 export interface Env {
   DB: D1Database;
@@ -28,7 +28,8 @@ const TOMBSTONE_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const CURRENT_REVISION = '(SELECT revision FROM households WHERE id = ?)';
 
 const ITEM_COLUMNS =
-  'id, name, name_updated_at, checked, checked_updated_at, deleted_at, created_at, revision';
+  'id, name, name_updated_at, checked, checked_updated_at, category,' +
+  ' category_updated_at, deleted_at, created_at, revision';
 
 interface ItemRow {
   id: string;
@@ -36,6 +37,8 @@ interface ItemRow {
   name_updated_at: number;
   checked: number;
   checked_updated_at: number;
+  category: string | null;
+  category_updated_at: number;
   deleted_at: number | null;
   created_at: number;
   revision: number;
@@ -48,6 +51,10 @@ function toItem(row: ItemRow): Item {
     nameUpdatedAt: row.name_updated_at,
     checked: row.checked !== 0,
     checkedUpdatedAt: row.checked_updated_at,
+    // Anything unrecognized -- including rows written before ADR-0008 -- comes back null
+    // and renders under "Other".
+    category: isCategory(row.category) ? (row.category as Category) : null,
+    categoryUpdatedAt: row.category_updated_at,
     deletedAt: row.deleted_at,
     createdAt: row.created_at,
     revision: row.revision,
@@ -196,8 +203,8 @@ function statementFor(db: D1Database, id: string, mutation: Mutation): D1Prepare
       return db
         .prepare(
           'INSERT INTO items (id, household_id, name, name_updated_at, checked,' +
-            ' checked_updated_at, deleted_at, created_at, revision)' +
-            ` VALUES (?, ?, ?, ?, 0, ?, NULL, ?, ${CURRENT_REVISION})` +
+            ' checked_updated_at, category, category_updated_at, deleted_at, created_at,' +
+            ` revision) VALUES (?, ?, ?, ?, 0, ?, ?, ?, NULL, ?, ${CURRENT_REVISION})` +
             ' ON CONFLICT(id) DO NOTHING',
         )
         .bind(
@@ -205,6 +212,8 @@ function statementFor(db: D1Database, id: string, mutation: Mutation): D1Prepare
           id,
           mutation.name,
           mutation.clientTime,
+          mutation.clientTime,
+          mutation.category,
           mutation.clientTime,
           mutation.clientTime,
           id,
@@ -234,14 +243,24 @@ function statementFor(db: D1Database, id: string, mutation: Mutation): D1Prepare
           mutation.clientTime,
         );
 
+    case 'setCategory':
+      // Its own clock, so moving an item between aisles leaves the name and checked state
+      // exactly where they were (ADR-0005, ADR-0008).
+      return db
+        .prepare(
+          `UPDATE items SET category = ?, category_updated_at = ?, revision = ${CURRENT_REVISION}` +
+            ' WHERE id = ? AND household_id = ? AND category_updated_at < ?',
+        )
+        .bind(mutation.category, mutation.clientTime, id, mutation.itemId, id, mutation.clientTime);
+
     case 'deleteItem':
       // Upsert rather than update: if a delete somehow arrives before the add it refers
       // to, we still want a tombstone, so the later add cannot resurrect the item.
       return db
         .prepare(
           'INSERT INTO items (id, household_id, name, name_updated_at, checked,' +
-            ' checked_updated_at, deleted_at, created_at, revision)' +
-            ` VALUES (?, ?, '', 0, 0, 0, ?, ?, ${CURRENT_REVISION})` +
+            ' checked_updated_at, category, category_updated_at, deleted_at, created_at,' +
+            ` revision) VALUES (?, ?, '', 0, 0, 0, NULL, 0, ?, ?, ${CURRENT_REVISION})` +
             ' ON CONFLICT(id) DO UPDATE SET deleted_at = excluded.deleted_at,' +
             ' revision = excluded.revision WHERE items.deleted_at IS NULL',
         )

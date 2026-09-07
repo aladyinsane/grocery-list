@@ -47,8 +47,14 @@ doesn't can't. Treat it a bit like a house key.
 - **Add something:** type it in the box at the top and tap Add.
 - **Check something off:** tap the circle next to it.
 - **Change a name:** tap the item's name and type.
+- **Move something to a different aisle:** tap its name, then pick from the **Aisle** list
+  that appears underneath.
 - **Remove one thing:** tap the × on its row.
 - **Clear everything you've picked up:** tap "Clear N checked" at the bottom.
+
+Items sort themselves into aisles — Produce, Bakery, Dairy & Eggs and so on — in roughly
+the order you walk a shop. Anything it doesn't recognize goes under **Other**, and if you
+move it to the right aisle it will remember that the next time you add the same thing.
 
 ---
 
@@ -68,6 +74,10 @@ Look at the line under "Groceries." It always tells you: "Synced just now," "Syn
 
 **How quickly does my partner see what I add?**
 Within about three seconds, as long as their app is open.
+
+**It put something in the wrong aisle.**
+Tap the item's name and choose the right one from the Aisle list. It remembers, so the next
+time you add that item it goes straight there.
 
 **We both edited the same thing at once. What happens?**
 Both edits stick. If you rename something at the same moment they check it off, you end up
