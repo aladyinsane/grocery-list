@@ -1,8 +1,9 @@
 /** First run: make a household, then hand over the link that *is* the login (ADR-0004). */
 
 import { useState } from 'react';
-import { createHousehold } from '../sync/index.js';
+import { createHousehold, storedToken } from '../sync/index.js';
 import { InstallHelp } from './InstallHelp.js';
+import { pointManifestAtHousehold } from './manifest.js';
 
 export function Landing() {
   const [busy, setBusy] = useState(false);
@@ -13,11 +14,13 @@ export function Landing() {
     setBusy(true);
     setError(null);
     try {
-      const { url } = await createHousehold();
+      const { token, url } = await createHousehold();
       setCreated(url);
       // Move the browser onto the real list URL so "Add to Home Screen" captures the
-      // token, without losing the copyable link above.
+      // token, without losing the copyable link above -- and point the manifest at it,
+      // since the icon launches the manifest's start_url rather than this page.
       window.history.replaceState(null, '', new URL(url).pathname);
+      pointManifestAtHousehold(token);
     } catch {
       setError('Could not create the list. Check your connection and try again.');
     } finally {
@@ -46,16 +49,41 @@ export function Landing() {
     );
   }
 
+  // If this browser already knows a household, offer to open it. Landing here with a list
+  // you already have is how someone accidentally ends up with two of them.
+  const existing = storedToken();
+
   return (
     <div className="landing">
       <h1 className="landing__title">Grocery list</h1>
-      <p className="landing__lead">
-        A shared list for two phones. No account, no password — just a private link you
-        both keep.
-      </p>
-      <button className="landing__button" type="button" onClick={() => void create()} disabled={busy}>
-        {busy ? 'Creating…' : 'Create our list'}
-      </button>
+      {existing ? (
+        <>
+          <p className="landing__lead">You already have a list on this device.</p>
+          <a className="landing__button" href={`/h/${existing}`}>
+            Open your list
+          </a>
+          <p className="landing__note">
+            Looking for a list someone shared with you? Open the link they sent — that link
+            is the list.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="landing__lead">
+            A shared list for two phones. No account, no password — just a private link you
+            both keep. If someone sent you a link, open that instead — it goes straight to
+            their list.
+          </p>
+          <button
+            className="landing__button"
+            type="button"
+            onClick={() => void create()}
+            disabled={busy}
+          >
+            {busy ? 'Creating…' : 'Create our list'}
+          </button>
+        </>
+      )}
       {error && <p className="landing__error">{error}</p>}
     </div>
   );
