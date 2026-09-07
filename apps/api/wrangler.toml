@@ -14,4 +14,4 @@ not_found_handling = "single-page-application"
 binding = "DB"
 database_name = "grocery-list"
 # Filled in by `wrangler d1 create grocery-list` -- see docs/OPERATIONS.md.
-database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
+database_id = "536af260-9ffc-4357-8920-c8de7cf1fd19"
