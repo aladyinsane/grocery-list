@@ -1,0 +1,22 @@
+{
+  "name": "grocery-list",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A shared grocery list for two people, that actually syncs.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
