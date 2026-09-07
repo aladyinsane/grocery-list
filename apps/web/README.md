@@ -4,7 +4,7 @@ The PWA: React + TypeScript + Vite, installed to the iPhone home screen (ADR-000
 
 ```
 src/sync/merge.ts    pure merge logic -- no network, no storage, no React
-src/sync/engine.ts   the poll loop, the durable queue, status
+src/sync/engine.ts   the poll loop, the durable queue, status, categorizing on add
 src/sync/storage.ts  localStorage persistence and the token in the URL
 src/sync/client.ts   the two API calls
 src/ui/              ItemList, AddBar, SyncStatus, InstallHelp, Landing
@@ -26,6 +26,16 @@ lands at the newest revision, but the revisions between the old cursor and that 
 to the other phone — everything it did while we were offline. Only `poll()`, which fetches
 a whole range, may move the cursor. `test/engine.test.ts` pins this; it is a bug that has
 already happened once.
+
+## Aisles
+
+Items are grouped into aisles (ADR-0008). The category is worked out on the client at add
+time and stored on the item, not computed at render — a correction has to live somewhere,
+and an offline add has to be categorized with no network. The rules themselves are in
+`packages/shared`, because Siri's `/api/quick-add` will need the same ones server-side.
+
+Grouping is unconditional. A short list is mostly headings, which is a real cost, but a
+list that sometimes groups and sometimes doesn't is a concept to learn.
 
 ## Icons
 

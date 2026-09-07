@@ -1,6 +1,6 @@
 /** The two sync endpoints (ADR-0005). Both are idempotent and safe to retry. */
 
-import type { ListResponse, Mutation, MutationsResponse } from '@grocery/shared';
+import { isCategory, type ListResponse, type Mutation, type MutationsResponse } from '@grocery/shared';
 import { applyMutations, listChanges, type Env, type Household } from '../db.js';
 import { badRequest, json } from '../http.js';
 
@@ -69,10 +69,18 @@ function validate(value: unknown): Mutation | null {
   const name = m['name'];
   const hasName = typeof name === 'string' && name.length > 0 && name.length <= MAX_NAME_LENGTH;
 
+  const category = m['category'];
+
   switch (m['op']) {
     case 'addItem':
-      return hasItemId && hasName
-        ? { op: 'addItem', itemId: itemId as string, name: name as string, clientTime }
+      return hasItemId && hasName && isCategory(category)
+        ? {
+            op: 'addItem',
+            itemId: itemId as string,
+            name: name as string,
+            category,
+            clientTime,
+          }
         : null;
     case 'renameItem':
       return hasItemId && hasName
@@ -86,6 +94,10 @@ function validate(value: unknown): Mutation | null {
             checked: m['checked'] as boolean,
             clientTime,
           }
+        : null;
+    case 'setCategory':
+      return hasItemId && isCategory(category)
+        ? { op: 'setCategory', itemId: itemId as string, category, clientTime }
         : null;
     case 'deleteItem':
       return hasItemId ? { op: 'deleteItem', itemId: itemId as string, clientTime } : null;

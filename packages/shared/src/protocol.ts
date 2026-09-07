@@ -7,6 +7,7 @@
  * blindly on a flaky connection (ADR-0005 §1).
  */
 
+import type { Category } from './categories.js';
 import type { Item, Revision, Timestamp } from './types.js';
 
 /** Add a new item. Carries the client-generated id, so a retry cannot duplicate it. */
@@ -14,6 +15,8 @@ export interface AddItemMutation {
   op: 'addItem';
   itemId: string;
   name: string;
+  /** Worked out by the client before sending, so an offline add is categorized too. */
+  category: Category;
   clientTime: Timestamp;
 }
 
@@ -30,6 +33,17 @@ export interface SetCheckedMutation {
   op: 'setChecked';
   itemId: string;
   checked: boolean;
+  clientTime: Timestamp;
+}
+
+/**
+ * Move an item to a different aisle. Touches `categoryUpdatedAt` only, so correcting the
+ * category cannot resurrect a stale name or un-check the item (ADR-0008).
+ */
+export interface SetCategoryMutation {
+  op: 'setCategory';
+  itemId: string;
+  category: Category;
   clientTime: Timestamp;
 }
 
@@ -50,6 +64,7 @@ export type Mutation =
   | AddItemMutation
   | RenameItemMutation
   | SetCheckedMutation
+  | SetCategoryMutation
   | DeleteItemMutation
   | ClearCheckedMutation;
 

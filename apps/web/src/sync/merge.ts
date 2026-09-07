@@ -9,7 +9,13 @@
  * replaying it is deterministic.
  */
 
-import type { Item, Mutation } from '@grocery/shared';
+import {
+  categoryOrder,
+  UNCATEGORIZED,
+  type Category,
+  type Item,
+  type Mutation,
+} from '@grocery/shared';
 
 export type ItemMap = Readonly<Record<string, Item>>;
 
@@ -35,6 +41,8 @@ export function applyMutation(items: ItemMap, mutation: Mutation): ItemMap {
         nameUpdatedAt: mutation.clientTime,
         checked: false,
         checkedUpdatedAt: mutation.clientTime,
+        category: mutation.category,
+        categoryUpdatedAt: mutation.clientTime,
         deletedAt: null,
         createdAt: mutation.clientTime,
         revision: 0,
@@ -62,6 +70,16 @@ export function applyMutation(items: ItemMap, mutation: Mutation): ItemMap {
       return next;
     }
 
+    case 'setCategory': {
+      if (!existing || existing.categoryUpdatedAt >= mutation.clientTime) return items;
+      next[mutation.itemId] = {
+        ...existing,
+        category: mutation.category,
+        categoryUpdatedAt: mutation.clientTime,
+      };
+      return next;
+    }
+
     case 'deleteItem': {
       // A delete for an item we have never seen still leaves a tombstone, so a late-
       // arriving add cannot resurrect it.
@@ -74,6 +92,8 @@ export function applyMutation(items: ItemMap, mutation: Mutation): ItemMap {
             nameUpdatedAt: 0,
             checked: false,
             checkedUpdatedAt: 0,
+            category: null,
+            categoryUpdatedAt: 0,
             deletedAt: mutation.clientTime,
             createdAt: mutation.clientTime,
             revision: 0,
@@ -112,11 +132,34 @@ export function mergeChanges(server: ItemMap, changed: readonly Item[]): ItemMap
   return next;
 }
 
-/** Drop tombstones and put the list in a stable order: oldest first, as entered. */
+/**
+ * Drop tombstones and put the list in shop order: aisle by aisle, and within an aisle the
+ * order things were entered (ADR-0008).
+ *
+ * Checked items stay where they are rather than sinking to the bottom — a list that
+ * rearranges itself under your thumb mid-aisle is disorienting.
+ */
 export function visibleItems(items: ItemMap): Item[] {
   return Object.values(items)
     .filter((item) => item.deletedAt == null)
-    .sort((a, b) => a.createdAt - b.createdAt || (a.id < b.id ? -1 : 1));
+    .sort(
+      (a, b) =>
+        categoryOrder(a.category) - categoryOrder(b.category) ||
+        a.createdAt - b.createdAt ||
+        (a.id < b.id ? -1 : 1),
+    );
+}
+
+/** The visible list split into aisles, empty ones omitted, in the order they are walked. */
+export function groupedItems(items: readonly Item[]): { category: Category; items: Item[] }[] {
+  const groups: { category: Category; items: Item[] }[] = [];
+  for (const item of items) {
+    const category = item.category ?? UNCATEGORIZED;
+    const last = groups[groups.length - 1];
+    if (last && last.category === category) last.items.push(item);
+    else groups.push({ category, items: [item] });
+  }
+  return groups;
 }
 
 /** Highest revision we have seen, used as the next poll's cursor. */

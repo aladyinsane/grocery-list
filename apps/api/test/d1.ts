@@ -11,7 +11,7 @@
  */
 
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 type Row = Record<string, unknown>;
@@ -56,8 +56,12 @@ export class FakeD1 {
 
   constructor() {
     this.db.exec('PRAGMA foreign_keys = ON');
-    const migration = fileURLToPath(new URL('../migrations/0001_init.sql', import.meta.url));
-    this.db.exec(readFileSync(migration, 'utf8'));
+    // Every migration, in order -- the same set `wrangler d1 migrations apply` runs. Doing
+    // this by directory rather than by name means a new migration needs no change here.
+    const dir = fileURLToPath(new URL('../migrations/', import.meta.url));
+    for (const file of readdirSync(dir).filter((f) => f.endsWith('.sql')).sort()) {
+      this.db.exec(readFileSync(dir + file, 'utf8'));
+    }
   }
 
   prepare(sql: string): FakeStatement {

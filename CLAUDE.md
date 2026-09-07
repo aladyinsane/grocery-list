@@ -49,6 +49,19 @@ something checks the fact automatically or it does not belong in prose.
 the index, stated test counts, and British spellings. It runs in CI. It cannot tell whether
 a sentence is still true, which is what the table above is for.
 
+Occasionally a British word is *data* rather than prose — the aisle dictionary carries
+British produce names as lookup keys, so that either spelling finds the right shelf. Mark
+those regions rather than weakening the check:
+
+```
+check-docs: allow-british:start — and say why
+...
+check-docs: allow-british:end
+```
+
+Keep the region tight. Exempting a whole file would quietly let real British prose in
+alongside the data.
+
 ## Decisions already made — read before proposing otherwise
 
 | ADR | Decision | The thing people forget |
@@ -58,15 +71,18 @@ a sentence is still true, which is what the table above is for.
 | 0004 | Secret link, no accounts | The threat model is *friction*, not attackers. It's a grocery list |
 | 0005 | Polling on a revision cursor, not websockets | A cursor can't miss an update; a dropped socket message can. And you'd need the cursor anyway for reconnect |
 | 0006 | Custom domain, `groceries.laurenchaplinski.com` | The host is frozen into every home screen icon, so it had to be settled before anyone installed. workers.dev stays live as the fallback |
+| 0008 | Categorize on the client at add time, stored as a synced field | Not computed at render: a manual correction has to live somewhere, and an offline add has to be categorized with no network |
 
 ## Layout
 
 ```
 docs/          principles, ADRs, setup/operations guides
-packages/shared/   domain types + wire protocol, shared by both apps
+packages/shared/   domain types, wire protocol, and the aisle rules -- shared so the
+               Worker and the PWA cannot disagree (ADR-0008)
 apps/api/      Cloudflare Worker: API, D1 schema, serves the built PWA
 apps/web/      the PWA: React + TypeScript + Vite
-shortcuts/     the Siri shortcut (PR 4)
+scripts/       icon generation, the documentation check
+shortcuts/     the Siri shortcut (ADR-0007, not yet written)
 ```
 
 npm workspaces. `npm run typecheck`, `npm test`, `npm run build` from the root.

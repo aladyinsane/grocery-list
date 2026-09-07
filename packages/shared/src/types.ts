@@ -7,6 +7,8 @@
  * See ADR-0005 for why the shape is what it is.
  */
 
+import type { Category } from './categories.js';
+
 /** Milliseconds since the Unix epoch. */
 export type Timestamp = number;
 
@@ -33,6 +35,12 @@ export interface Item {
   nameUpdatedAt: Timestamp;
   checked: boolean;
   checkedUpdatedAt: Timestamp;
+  /**
+   * The aisle this item belongs in (ADR-0008), assigned when it was added and correctable
+   * by hand. Null for items that predate categorization; they render under "Other".
+   */
+  category: Category | null;
+  categoryUpdatedAt: Timestamp;
   /** Tombstone. Non-null means deleted; retained 30 days so deletes reach absent clients. */
   deletedAt: Timestamp | null;
   createdAt: Timestamp;

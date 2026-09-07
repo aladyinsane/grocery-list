@@ -9,7 +9,13 @@
  * once a year.
  */
 
-import type { Item, Mutation } from '@grocery/shared';
+import {
+  categorize,
+  rememberedCategories,
+  type Category,
+  type Item,
+  type Mutation,
+} from '@grocery/shared';
 import { ApiError, fetchChanges, pushMutations } from './client.js';
 import { highestRevision, mergeChanges, replay, visibleItems, type ItemMap } from './merge.js';
 import { load, save } from './storage.js';
@@ -94,14 +100,21 @@ export class SyncEngine {
   addItem(name: string): void {
     const trimmed = name.trim();
     if (!trimmed) return;
-    // The id is decided here, before the network is involved. That is what makes a
-    // retried request impossible to turn into a duplicate line on the list.
+    // The id and the category are both decided here, before the network is involved. The
+    // id is what makes a retried request impossible to turn into a duplicate line; the
+    // category is what makes an offline add land in the right aisle immediately
+    // (ADR-0008).
     this.enqueue({
       op: 'addItem',
       itemId: crypto.randomUUID(),
       name: trimmed,
+      category: categorize(trimmed, this.remembered()),
       clientTime: Date.now(),
     });
+  }
+
+  setCategory(itemId: string, category: Category): void {
+    this.enqueue({ op: 'setCategory', itemId, category, clientTime: Date.now() });
   }
 
   rename(itemId: string, name: string): void {
@@ -123,6 +136,17 @@ export class SyncEngine {
   }
 
   // --- internals ----------------------------------------------------------------------
+
+  /**
+   * What this household has already decided about item names, tombstones included.
+   *
+   * Correcting "oat milk" to Dairy & Eggs once should make next week's "oat milk" land
+   * there too. Best-effort by design: a replica rebuilt by a full resync has forgotten,
+   * and falls back to the dictionary (ADR-0008).
+   */
+  private remembered(): ReadonlyMap<string, Category> {
+    return rememberedCategories(Object.values(replay(this.server, this.pending)));
+  }
 
   private enqueue(mutation: Mutation): void {
     this.pending = [...this.pending, mutation];

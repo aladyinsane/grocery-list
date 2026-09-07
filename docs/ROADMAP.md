@@ -33,14 +33,17 @@ from a single source, which is most of the practical value here — but it is no
 per-token limiting ADR-0004 actually specifies, so it narrows the gap rather than closing
 it.
 
-### Automatic categorization — [ADR-0008](adr/0008-automatic-item-categorization.md), accepted, not yet built
-Items sort themselves into aisles, the way iOS Reminders did. The headline feature we're
-still missing. The decision is settled; the implementation is the next feature PR.
+### Watch what lands in "Other"
+Automatic categorization shipped
+([ADR-0008](adr/0008-automatic-item-categorization.md)). Items sort themselves into aisles,
+unrecognized ones go to "Other", and correcting one is remembered for next time.
 
-The open question — whether unrecognized items need an LLM fallback — was answered *no*, on
-offline, latency and recurring-cost grounds, but deliberately left reviewable: **if "Other"
-is still routinely occupied after a month of real shopping, that is evidence and the
-fallback is worth a new ADR.** Worth actually checking rather than assuming either way.
+The open question was whether unrecognized items need an LLM fallback. Answered *no*, on
+offline, latency and recurring-cost grounds — but the argument rests on a guess about how
+long the long tail is, so it was left reviewable with a concrete trigger: **if "Other" is
+still routinely occupied after a month of real shopping, that is evidence and the fallback
+is worth a new ADR.** The cheaper answer first is usually just adding the missing words to
+the dictionary in `packages/shared/src/categorize.ts`.
 
 ### Siri — ADR-0007
 "Hey Siri, Grocery" → "What are we adding?" → "milk and eggs." An Apple Shortcut that

@@ -77,7 +77,9 @@ describe('authentication', () => {
       method: 'POST',
       headers: { ...auth(mine), 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        mutations: [{ op: 'addItem', itemId: 'a', name: 'milk', clientTime: 1 }],
+        mutations: [
+          { op: 'addItem', itemId: 'a', name: 'milk', category: 'Dairy & Eggs', clientTime: 1 },
+        ],
       }),
     });
 
@@ -95,7 +97,9 @@ describe('a full round trip', () => {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        mutations: [{ op: 'addItem', itemId: 'a', name: 'milk', clientTime: 1 }],
+        mutations: [
+          { op: 'addItem', itemId: 'a', name: 'milk', category: 'Dairy & Eggs', clientTime: 1 },
+        ],
       }),
     });
     expect(pushed.status).toBe(200);
@@ -140,7 +144,23 @@ describe('rejecting bad input', () => {
 
   it('rejects an empty item name', async () => {
     const body = JSON.stringify({
-      mutations: [{ op: 'addItem', itemId: 'a', name: '', clientTime: 1 }],
+      mutations: [{ op: 'addItem', itemId: 'a', name: '', category: 'Other', clientTime: 1 }],
+    });
+    expect((await post(body)).status).toBe(400);
+  });
+
+  it('rejects an add with no category', async () => {
+    // The client works the category out before sending (ADR-0008), so an add without one
+    // is a malformed request rather than something to guess at.
+    const body = JSON.stringify({
+      mutations: [{ op: 'addItem', itemId: 'a', name: 'milk', clientTime: 1 }],
+    });
+    expect((await post(body)).status).toBe(400);
+  });
+
+  it('rejects a category that is not a real aisle', async () => {
+    const body = JSON.stringify({
+      mutations: [{ op: 'setCategory', itemId: 'a', category: 'Aisle 7', clientTime: 1 }],
     });
     expect((await post(body)).status).toBe(400);
   });

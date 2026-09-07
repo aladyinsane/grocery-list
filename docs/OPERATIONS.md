@@ -72,6 +72,20 @@ Builds the PWA and publishes the Worker — API and front end together, one orig
 (ADR-0003). Nobody has to reinstall anything; the service worker picks up the new version
 the next time the app is opened.
 
+> **If the change adds a migration, apply it first.** `npm run deploy` does not run
+> migrations, so a Worker expecting a new column would go live against a database without
+> one:
+>
+> ```bash
+> npm run migrate:remote -w @grocery/api && npm run deploy
+> ```
+>
+> Check `apps/api/migrations/` against what production has if you are unsure.
+
+> **If a change seems not to have landed,** a stale service worker is the first thing to
+> suspect — it can keep serving the previous build. Opening the app in a private Safari tab
+> bypasses it and shows what actually deployed.
+
 ## Running it locally
 
 Two terminals:
