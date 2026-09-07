@@ -65,7 +65,7 @@ shortcuts/     the Siri shortcut (PR 4)
 ```
 npm install
 npm run typecheck   # src and tests
-npm test            # 54 tests
+npm test            # 64 tests
 npm run build
 ```
 
