@@ -1,0 +1,17 @@
+name = "grocery-list"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# The Worker serves the built PWA from the same origin as the API (ADR-0003).
+# One deploy, one URL, no CORS.
+[assets]
+directory = "../web/dist"
+binding = "ASSETS"
+# Any path that isn't a real file falls back to index.html, so /h/<token> loads the app.
+not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "grocery-list"
+# Filled in by `wrangler d1 create grocery-list` -- see docs/OPERATIONS.md.
+database_id = "536af260-9ffc-4357-8920-c8de7cf1fd19"
