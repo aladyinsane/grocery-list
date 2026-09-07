@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "paths": { "@grocery/shared": ["../../packages/shared/src/index.ts"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "vite.config.ts", "vitest.config.ts"]
+}

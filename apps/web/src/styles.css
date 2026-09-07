@@ -1,0 +1,352 @@
+/*
+ * Sized for a thumb in a supermarket, not a mouse. Big tap targets, high contrast,
+ * system font so it feels native on iOS, and safe-area padding so nothing hides under
+ * the notch or the home indicator.
+ */
+
+:root {
+  --bg: #f7f6f1;
+  --surface: #ffffff;
+  --ink: #1a1a18;
+  --ink-soft: #6b6b64;
+  --line: #e2e0d8;
+  --green: #1a5d3a;
+  --amber: #8a6100;
+  --red: #a3341f;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14140f;
+    --surface: #1e1e19;
+    --ink: #f2f1ea;
+    --ink-soft: #a3a196;
+    --line: #33322b;
+    --green: #6fca97;
+    --amber: #e0b25e;
+    --red: #e58b74;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app,
+.landing {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem
+    calc(2rem + env(safe-area-inset-bottom));
+}
+
+/* --- header ------------------------------------------------------------------------ */
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+
+.header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.header__help {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* --- sync status -- principle 2: this line is never allowed to lie ------------------ */
+
+.status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.status__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.status--synced {
+  color: var(--green);
+}
+.status--syncing {
+  color: var(--amber);
+}
+.status--offline {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* --- add bar ----------------------------------------------------------------------- */
+
+.addbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.addbar__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--surface);
+  color: var(--ink);
+  /* 16px minimum, or iOS zooms the whole page when the field is focused. */
+  font-size: 1rem;
+}
+
+.addbar__input:focus-visible,
+.item__edit:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.addbar__button,
+.landing__button,
+.clear {
+  padding: 0.85rem 1.1rem;
+  border: none;
+  border-radius: 0.7rem;
+  background: var(--green);
+  color: var(--bg);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addbar__button:disabled {
+  opacity: 0.4;
+}
+
+/* --- items ------------------------------------------------------------------------- */
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item__check {
+  display: flex;
+  align-items: center;
+  /* Generous hit area -- this gets tapped one-handed while pushing a trolley. */
+  padding: 0.9rem 0.15rem;
+  cursor: pointer;
+}
+
+/*
+ * Hidden visually but still a real focusable checkbox, so VoiceOver and keyboard
+ * navigation work. Zero-size elements get skipped by some screen readers, hence 1px
+ * rather than 0.
+ */
+.item__check input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.item__box {
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  flex: none;
+}
+
+.item__check input:checked + .item__box {
+  border-color: var(--green);
+  background: var(--green);
+  box-shadow: inset 0 0 0 0.25rem var(--surface);
+}
+
+.item__check input:focus-visible + .item__box {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.item__name {
+  flex: 1;
+  min-width: 0;
+  padding: 0.9rem 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: text;
+  overflow-wrap: anywhere;
+}
+
+.item--checked .item__name {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+}
+
+.item__edit {
+  flex: 1;
+  min-width: 0;
+  margin: 0.5rem 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.item__remove {
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.6rem 0.3rem;
+  cursor: pointer;
+  flex: none;
+}
+
+.empty {
+  margin: 2.5rem 0;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.clear {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+/* --- install help & landing -------------------------------------------------------- */
+
+.install {
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--surface);
+}
+
+.install__lead {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.install__steps {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--ink-soft);
+}
+
+.install__steps li + li {
+  margin-top: 0.35rem;
+}
+
+.install__note,
+.landing__error {
+  margin: 0.75rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.landing__error {
+  color: var(--red);
+}
+
+.install__dismiss {
+  margin-top: 0.9rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.landing {
+  padding-top: 3rem;
+}
+
+.landing__title {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.landing__lead {
+  margin: 0 0 1.5rem;
+  color: var(--ink-soft);
+}
+
+.landing__link {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.landing__button {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}

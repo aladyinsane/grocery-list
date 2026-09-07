@@ -1,9 +1,10 @@
 # Setting up the app on your iPhone
 
-> **Note:** the app is built in PR 2. Until then this page describes the flow that PR 2
-> implements, and the placeholders below are filled in when it deploys.
-
 Takes about thirty seconds. You only ever do this once.
+
+> **You need the app's address first.** Someone has to deploy it once — see
+> [OPERATIONS.md](OPERATIONS.md) — which produces a URL like
+> `https://grocery-list.<your-subdomain>.workers.dev`. Everything below assumes you have it.
 
 ---
 
@@ -18,12 +19,15 @@ the screen (or top right on an iPad).
 
 **4. Tap "Add"** in the top right.
 
-That's it. There's now a 🛒 icon on your home screen. Tap it any time — you'll never have
-to sign in, and there's no password.
+That's it. There's now a green cart icon on your home screen. Tap it any time — you'll
+never have to sign in, and there's no password.
 
 > **Use the icon, not Safari.** Opening it from the home screen icon makes it full screen
-> and lets it work when you have no signal. It's worth deleting the Safari tab so you don't
+> and lets it work when you have no signal. It's worth closing the Safari tab so you don't
 > get the two mixed up.
+
+The app shows you these same instructions the first time you open it in Safari, and they
+stay behind the **?** button in the corner if you ever need them again.
 
 ---
 
@@ -31,11 +35,22 @@ to sign in, and there's no password.
 
 1. Go to the app's address.
 2. Tap **Create our list**.
-3. You'll get your own private link. Follow steps 2–4 above to add it to your home screen.
+3. You'll get your own private link. Tap **Copy link**, then follow steps 2–4 above to add
+   it to your home screen.
 4. **Text the link to whoever you're sharing with.** They follow the instructions above.
 
-Keep the link somewhere safe — anyone who has it can see and edit the list, and anyone
-who doesn't can't. Treat it a bit like a house key.
+Keep the link somewhere safe — anyone who has it can see and edit the list, and anyone who
+doesn't can't. Treat it a bit like a house key.
+
+---
+
+## Using it
+
+- **Add something:** type it in the box at the top and tap Add.
+- **Check something off:** tap the circle next to it.
+- **Change a name:** tap the item's name and type.
+- **Remove one thing:** tap the × on its row.
+- **Clear everything you've picked up:** tap "Clear N checked" at the bottom.
 
 ---
 
@@ -45,12 +60,20 @@ who doesn't can't. Treat it a bit like a house key.
 No. The link is all there is. Tapping the icon always opens straight into the list.
 
 **What if I have no signal at the shop?**
-It still works. Add and check things off normally — it says "Offline" at the top and sends
-everything as soon as you have signal again. Nothing gets lost.
+It still works. Add and check things off normally — it says "Offline — 2 changes waiting"
+at the top and sends everything as soon as you have signal again. Nothing gets lost, even
+if you close the app or your phone restarts in between.
 
 **How do I know it's up to date?**
-Look at the top of the screen. It always tells you: "Synced just now," "Syncing…," or
+Look at the line under "Groceries." It always tells you: "Synced just now," "Syncing…," or
 "Offline — 2 changes waiting." If it doesn't say there's a problem, there isn't one.
+
+**How quickly does my partner see what I add?**
+Within about three seconds, as long as their app is open.
+
+**We both edited the same thing at once. What happens?**
+Both edits stick. If you rename something at the same moment they check it off, you end up
+with it renamed *and* checked, not one edit undoing the other.
 
 **I deleted the icon by accident.**
 Ask your partner to text you the link again, and redo the steps above. Nothing is lost —

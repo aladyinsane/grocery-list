@@ -21,13 +21,13 @@ Free to run, nothing to renew, nothing that expires and needs reinstalling.
 
 ## Status
 
-Being built. This PR (PR 1) lays down the principles and the architecture decisions;
-the app itself comes next.
+The list works. Add items, check them off, edit them, clear the done pile — on two phones,
+offline, with a status line that tells you the truth about whether you're synced.
 
 | | |
 |---|---|
-| **PR 1** | Principles, ADRs 0001–0005, repo structure ← *you are here* |
-| **PR 2** | The working list: Worker + D1 + PWA + sync |
+| **PR 1** | Principles, ADRs 0001–0005, repo structure — *merged* |
+| **PR 2** | The working list: Worker + D1 + PWA + sync ← *you are here* |
 | **PR 3** | Automatic categorization into aisles (ADR-0006) |
 | **PR 4** | Siri, via an Apple Shortcut (ADR-0007) |
 
@@ -45,8 +45,9 @@ the app itself comes next.
 ```
 docs/          principles, ADRs, setup and operations guides
 packages/      shared/  — domain types and the wire protocol
-apps/          api/     — the Cloudflare Worker (PR 2)
-               web/     — the PWA (PR 2)
+apps/          api/     — the Cloudflare Worker: API, D1, serves the PWA
+               web/     — the PWA: React + TypeScript + Vite
+scripts/       icon generation
 shortcuts/     the Siri shortcut (PR 4)
 ```
 
@@ -62,12 +63,12 @@ shortcuts/     the Siri shortcut (PR 4)
 
 ```
 npm install
-npm run typecheck
-npm test
+npm run typecheck   # src and tests
+npm test            # 54 tests
+npm run build
 ```
 
-`npm run dev` and `npm run deploy` become real in PR 2 — see
-[docs/OPERATIONS.md](docs/OPERATIONS.md).
+To run it locally, and to deploy, see [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## How we work
 

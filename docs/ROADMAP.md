@@ -11,6 +11,21 @@ relitigate it every six months).
 
 ## Next up
 
+### Rate limiting on the API — a known gap against ADR-0004
+
+ADR-0004 says requests are rate-limited per token. **They are not, as of PR 2.** Cloudflare's
+per-Worker rate-limiting binding has had an unstable API, and depending on a moving target
+for a defense-in-depth measure looked like the wrong trade against
+[principle 5](PRINCIPLES.md) — so it was deferred deliberately rather than bodged.
+
+Why this is tolerable for now: the token is 128 bits of randomness, so guessing one is not
+something rate limiting meaningfully changes. What rate limiting actually buys is bounding
+abuse if a link leaks, and cost protection — neither urgent at two users on a free tier.
+
+Options when we come back to it: Cloudflare's rate-limiting binding once it settles, a WAF
+rule at the zone level (needs a custom domain, not workers.dev), or a counter column on the
+household row. Should be a short ADR, since it revisits an accepted decision.
+
 ### Automatic categorization — ADR-0006
 Items sort themselves into aisles (Produce, Dairy, Meat & Fish, Bakery, Frozen, Pantry,
 Drinks, Household, Other), the way iOS Reminders did. The headline feature we're missing.
