@@ -10,12 +10,13 @@ The app lives at **<https://groceries.laurenchaplinski.com>**.
 
 **1. Tap the link they sent you.** It opens in Safari and you'll see the grocery list.
 
-**2. Tap the Share button.** It's the square with an arrow pointing up, at the bottom of
-the screen (or top right on an iPad).
+**2. Tap the ••• button.** It's at the bottom right of the screen (or top right on an
+iPad).
 
-**3. Scroll down and tap "Add to Home Screen."**
+**3. Tap "Share."** If "Add to Home Screen" isn't in the row of options, tap "More" first
+— it's in there.
 
-**4. Tap "Add"** in the top right.
+**4. Tap "Add to Home Screen," then "Add"** in the top right.
 
 That's it. There's now a green cart icon on your home screen. Tap it any time — you'll
 never have to sign in, and there's no password.
@@ -25,7 +26,9 @@ never have to sign in, and there's no password.
 > get the two mixed up.
 
 The app shows you these same instructions the first time you open it in Safari, and they
-stay behind the **?** button in the corner if you ever need them again.
+stay behind the **?** button in the corner if you ever need them again — once the app is
+on your home screen, that same button switches to explaining how to share the list with
+someone else instead, since installing is no longer the thing left to explain.
 
 ---
 
@@ -86,6 +89,11 @@ with it renamed *and* checked, not one edit undoing the other.
 **I deleted the icon by accident.**
 Ask your partner to text you the link again, and redo the steps above. Nothing is lost —
 the list lives on the server, not on your phone.
+
+**How do I send this list to a third person?**
+Press and hold the icon on your home screen, tap "Share Bookmark," and send the link
+however you'd normally send one. They open it and add it to their own home screen the
+same way you did. The **?** button shows these same steps once the app is installed.
 
 **Can I get to it on a computer?**
 Yes, paste the same link into any browser.
