@@ -48,7 +48,7 @@ function List({ token }: { token: string }) {
           className="header__help"
           type="button"
           onClick={() => setShowHelp((open) => !open)}
-          aria-label="How to add this to your home screen"
+          aria-label="Help"
           aria-expanded={showHelp}
         >
           ?
