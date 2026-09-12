@@ -1,6 +1,6 @@
 # ADR-0009: Deploy automatically on merge to main
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-09-10
 
 ## Context

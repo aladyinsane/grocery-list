@@ -15,6 +15,7 @@
     "dev:api": "npm run dev -w @grocery/api",
     "dev:web": "npm run dev -w @grocery/web",
     "icons": "python3 scripts/generate-icons.py",
+    "migrate:check": "node scripts/check-pending-migrations.mjs",
     "preview": "npm run build && npm run dev -w @grocery/api",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "tsc --build && tsc -p apps/api/tsconfig.test.json && tsc -p apps/web/tsconfig.test.json"

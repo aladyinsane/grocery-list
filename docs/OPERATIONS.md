@@ -64,27 +64,49 @@ custom domain; keep the other in your back pocket.
 
 ## Deploying a change
 
-```bash
-npm run deploy
-```
+**Merging to `main` deploys automatically** (ADR-0009). A GitHub Actions job builds and
+publishes the Worker the same way `npm run deploy` always has — API and front end together,
+one origin (ADR-0003) — right after checking the remote D1 for a migration the code expects
+that isn't there yet. Nobody has to reinstall anything; the service worker picks up the new
+version the next time the app is opened.
 
-Builds the PWA and publishes the Worker — API and front end together, one origin
-(ADR-0003). Nobody has to reinstall anything; the service worker picks up the new version
-the next time the app is opened.
-
-> **If the change adds a migration, apply it first.** `npm run deploy` does not run
-> migrations, so a Worker expecting a new column would go live against a database without
-> one:
+> **If that check finds a pending migration, the job fails on purpose** instead of shipping
+> a Worker against a schema it doesn't have. Apply the migration, then re-run the failed
+> job from the repo's Actions tab (or push an empty commit) to deploy:
 >
 > ```bash
-> npm run migrate:remote -w @grocery/api && npm run deploy
+> npm run migrate:remote -w @grocery/api
 > ```
 >
-> Check `apps/api/migrations/` against what production has if you are unsure.
+> Check `apps/api/migrations/` against what production has if you're unsure what's pending;
+> `npm run migrate:check` runs the same check the deploy job does, from your own machine.
 
-> **If a change seems not to have landed,** a stale service worker is the first thing to
-> suspect — it can keep serving the previous build. Opening the app in a private Safari tab
-> bypasses it and shows what actually deployed.
+> **A merge that lands while a deploy is already running queues behind it** rather than
+> canceling it — deliberately; see ADR-0009 if the reasoning matters to you later.
+
+> **If a change seems not to have landed,** check the Actions tab first — the job may have
+> failed at either step above. A stale service worker is the next thing to suspect: it can
+> keep serving the previous build. Opening the app in a private Safari tab bypasses it and
+> shows what actually deployed.
+
+> **To roll back a bad deploy**, Cloudflare keeps prior Worker versions —
+> `npx wrangler rollback` walks you through picking one and returns to it in about as long
+> as a deploy takes. The lists themselves live in D1 and aren't touched by rolling back the
+> Worker.
+
+**One-time setup, already done for this repo:** the deploy job authenticates as
+`CLOUDFLARE_API_TOKEN`, a repository secret under **Settings → Secrets and variables →
+Actions**. If it's ever missing or revoked, the deploy job fails loudly rather than
+deploying with no credentials — create a new API token scoped to Workers and D1 edit
+permissions on this account and add it under that same name.
+
+Deploying by hand still works, for local testing or if CI itself is unavailable. It has the
+same migration hazard `npm run migrate:check` guards against in CI, so run that first if
+you're unsure:
+
+```bash
+npm run migrate:check && npm run deploy
+```
 
 ## Running it locally
 

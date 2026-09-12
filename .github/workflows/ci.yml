@@ -4,15 +4,15 @@ on:
   push:
     branches: [main]
   pull_request:
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
   check:
     name: Docs, typecheck, test, build
     runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
 
@@ -35,3 +35,34 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # ADR-0009: deploy on merge to main, but never against an unmigrated schema.
+  deploy:
+    name: Deploy to production
+    needs: check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      # Fixed name, nothing derived from github.ref: every push to main contends for the
+      # same slot. cancel-in-progress stays false -- a deploy already running is never
+      # interrupted, only queued behind (see ADR-0009's Context for why that matters here).
+      group: production-deploy
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Check for pending migrations
+        run: npm run migrate:check
+
+      - name: Deploy
+        run: npm run deploy
