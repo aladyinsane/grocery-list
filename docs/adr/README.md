@@ -36,7 +36,7 @@ and what we now have to live with as a result.
 | [0005](0005-offline-first-sync-protocol.md) | Offline-first sync protocol | Accepted |
 | [0006](0006-serve-from-a-custom-domain.md) | Serve the app from a custom domain | Accepted |
 | [0008](0008-automatic-item-categorization.md) | Automatic item categorization | Accepted |
-| [0009](0009-deploy-automatically-on-merge-to-main.md) | Deploy automatically on merge to main | Proposed |
+| [0009](0009-deploy-automatically-on-merge-to-main.md) | Deploy automatically on merge to main | Accepted |
 
 Planned, not yet written:
 
