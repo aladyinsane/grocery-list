@@ -16,7 +16,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const problems = [];
@@ -71,7 +71,7 @@ const adrIndexPath = join(root, 'docs/adr/README.md');
 const adrIndex = readFileSync(adrIndexPath, 'utf8');
 
 for (const file of tracked('docs/adr/*.md')) {
-  const name = file.split('/').pop();
+  const name = basename(file);
   if (name === 'README.md' || name.startsWith('0000-')) continue;
 
   if (!adrIndex.includes(name)) {
