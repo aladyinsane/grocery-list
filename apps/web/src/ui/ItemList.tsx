@@ -11,9 +11,30 @@
  * they leave.
  */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CATEGORIES, type Category, type Item } from '@grocery/shared';
 import { groupedItems } from '../sync/merge.js';
+
+/**
+ * Whether focus leaving the name field means editing is actually done, rather than just
+ * moving to the aisle picker in the same row.
+ *
+ * This used to be `event.stopPropagation()` on the select's mousedown, which does nothing
+ * useful: the browser fires the input's blur as a direct consequence of focus moving away
+ * from it, not as an event that bubbles up through the select for stopPropagation to
+ * catch. So tapping the picker blurred the name field, which unmounted the picker before
+ * the tap could land on it -- it looked like the dropdown just disappeared, because it
+ * did. Checking where focus actually landed is the only thing that works.
+ *
+ * Exported so the decision can be tested without a real browser focus cycle -- see
+ * item-row-blur.test.ts.
+ */
+export function focusLeftTheRow(
+  row: { contains(node: EventTarget | null): boolean } | null,
+  relatedTarget: EventTarget | null,
+): boolean {
+  return !(row?.contains(relatedTarget) ?? false);
+}
 
 interface Props {
   items: Item[];
@@ -66,6 +87,7 @@ function ItemRow({
 }: { item: Item } & Omit<Props, 'items'>) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(item.name);
+  const rowRef = useRef<HTMLLIElement>(null);
 
   function commit() {
     setEditing(false);
@@ -74,7 +96,7 @@ function ItemRow({
   }
 
   return (
-    <li className={`item ${item.checked ? 'item--checked' : ''}`}>
+    <li className={`item ${item.checked ? 'item--checked' : ''}`} ref={rowRef}>
       <div className="item__row">
         <label className="item__check">
           <input
@@ -92,7 +114,11 @@ function ItemRow({
             value={draft}
             autoFocus
             onChange={(event) => setDraft(event.target.value)}
-            onBlur={commit}
+            onBlur={(event) => {
+              // Tapping the aisle picker moves focus off this input. That must not read
+              // as "done editing" -- see focusLeftTheRow above.
+              if (focusLeftTheRow(rowRef.current, event.relatedTarget)) commit();
+            }}
             onKeyDown={(event) => {
               if (event.key === 'Enter') commit();
               if (event.key === 'Escape') {
@@ -136,9 +162,6 @@ function ItemRow({
           <select
             value={item.category ?? 'Other'}
             aria-label={`Aisle for ${item.name}`}
-            // Committing the name on blur would close the row before the change lands, so
-            // the select stops the blur from reaching the name field.
-            onMouseDown={(event) => event.stopPropagation()}
             onChange={(event) => onRecategorize(item.id, event.target.value as Category)}
           >
             {CATEGORIES.map((category) => (
